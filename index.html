@@ -79,12 +79,15 @@
 
         .modal {
             background: white;
-            padding: 50px;
+            padding: 50px 30px;
             border-radius: 20px;
             text-align: center;
             max-width: 500px;
+            width: 90%;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
             animation: slideUp 0.6s ease-out;
+            position: relative;
+            min-height: 500px;
         }
 
         @keyframes slideUp {
@@ -131,6 +134,15 @@
             line-height: 1.6;
         }
 
+        .convince-message {
+            color: #e91e63;
+            font-size: 18px;
+            margin-top: 20px;
+            font-style: italic;
+            min-height: 50px;
+            animation: fadeIn 0.5s;
+        }
+
         .buttons {
             display: flex;
             gap: 20px;
@@ -138,13 +150,16 @@
         }
 
         button {
-            padding: 15px 40px;
-            font-size: 20px;
+            padding: 20px 50px;
+            font-size: 22px;
             border: none;
             border-radius: 50px;
             cursor: pointer;
             transition: all 0.3s;
             font-weight: bold;
+            min-width: 140px;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .yes-btn {
@@ -161,6 +176,10 @@
             background: #ddd;
             color: #666;
             position: relative;
+        }
+
+        .no-btn:active {
+            transform: scale(0.95);
         }
 
         .success-page {
@@ -226,9 +245,10 @@
         <div class="modal">
             <h1>❤️</h1>
             <p>Will you marry me?</p>
+            <p class="convince-message" id="convinceMessage"></p>
             <div class="buttons">
                 <button class="yes-btn" onclick="sayYes()">Yes! 💕</button>
-                <button class="no-btn" id="noBtn" onmouseover="moveButton()" onclick="return false;">No</button>
+                <button class="no-btn" id="noBtn" ontouchstart="moveButton()" onclick="moveButton()">No</button>
             </div>
         </div>
     </div>
@@ -258,18 +278,58 @@
 
         createHearts();
 
-        // Move the No button when hovering
+        let noClickCount = 0;
+        const cuteMessages = [
+            "Aww come on! Just say yes? 🥺",
+            "Pretty please? I'll make you breakfast in bed! 🥞",
+            "Think about all our cute moments together! 💕",
+            "I promise to always make you laugh! 😊",
+            "We'll have the best adventures together! 🌟",
+            "I'll always be there to give you hugs! 🤗",
+            "You're my favorite person in the whole world! 🌍",
+            "We're perfect for each other! Don't you think? 💑",
+            "I'll love you forever and ever! ♾️",
+            "Please? You're making me nervous! 😅",
+            "Remember our first date? Let's make more memories! 🎭",
+            "I promise to share my fries with you! 🍟",
+            "You make every day better! ☀️",
+            "We belong together like coffee and mornings! ☕",
+            "Say yes and I'll give you all my hoodies! 👕",
+            "I'll always hold your hand! 🤝",
+            "You're stuck with me anyway, might as well! 😜",
+            "Think of all the cute couple things we'll do! 💝",
+            "I'll love you even when we're old and wrinkly! 👴👵",
+            "Please say yes? I really love you! 💖"
+        ];
+
+        // Move the No button when touching/clicking
         function moveButton() {
+            event.preventDefault();
             const noBtn = document.getElementById('noBtn');
-            const maxX = window.innerWidth - noBtn.offsetWidth - 100;
-            const maxY = window.innerHeight - noBtn.offsetHeight - 100;
+            const modal = noBtn.closest('.modal');
+            const modalRect = modal.getBoundingClientRect();
 
-            const randomX = Math.random() * maxX;
-            const randomY = Math.random() * maxY;
+            // Calculate boundaries within the modal
+            const maxX = modalRect.width - noBtn.offsetWidth - 40;
+            const maxY = modalRect.height - noBtn.offsetHeight - 40;
 
-            noBtn.style.position = 'fixed';
+            const randomX = Math.random() * maxX + 20;
+            const randomY = Math.random() * maxY + 20;
+
+            noBtn.style.position = 'absolute';
             noBtn.style.left = randomX + 'px';
             noBtn.style.top = randomY + 'px';
+
+            // Show cute message
+            const convinceMsg = document.getElementById('convinceMessage');
+            if (noClickCount < cuteMessages.length) {
+                convinceMsg.textContent = cuteMessages[noClickCount];
+                noClickCount++;
+            } else {
+                convinceMsg.textContent = "You know you want to say yes! 💕";
+            }
+
+            return false;
         }
 
         // When Yes is clicked
