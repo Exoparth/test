@@ -220,6 +220,91 @@
             margin-top: 30px;
         }
 
+        .name-input-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .name-input-box {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .name-input-box h2 {
+            color: #e91e63;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        .name-input-box input {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-family: 'Georgia', serif;
+        }
+
+        .name-input-box input:focus {
+            outline: none;
+            border-color: #e91e63;
+        }
+
+        .name-input-box button {
+            width: 100%;
+            padding: 15px;
+            font-size: 20px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .error-message {
+            color: #e91e63;
+            font-size: 16px;
+            margin-top: 15px;
+            font-style: italic;
+            min-height: 48px;
+            line-height: 1.4;
+        }
+
+        .sorry-page {
+            display: none;
+            text-align: center;
+            color: white;
+            z-index: 10;
+            padding: 20px;
+        }
+
+        .sorry-page h1 {
+            font-size: 48px;
+            margin-bottom: 30px;
+            animation: bounce 1s;
+        }
+
+        .sorry-page p {
+            font-size: 28px;
+            line-height: 1.6;
+        }
+
         .ring {
             font-size: 100px;
             animation: rotate 2s linear infinite;
@@ -241,6 +326,16 @@
 <body>
     <div class="hearts" id="hearts"></div>
 
+    <div class="name-input-modal" id="nameInputModal">
+        <div class="name-input-box">
+            <h2>Wait! Who's saying yes? 💕</h2>
+            <p style="color: #666; font-size: 16px; margin-bottom: 20px;">Tell me your name...</p>
+            <input type="text" id="nameInput" placeholder="Enter your name" maxlength="50">
+            <button onclick="checkName()">Confirm 💖</button>
+            <p class="error-message" id="errorMessage"></p>
+        </div>
+    </div>
+
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal">
             <h1>❤️</h1>
@@ -254,11 +349,17 @@
     </div>
 
     <div class="success-page" id="successPage">
-        <h1>🎉 She Said Yes! 🎉</h1>
+        <h1>🎉 I Love You Dhinguu My BBG! 🎉</h1>
         <div class="ring">💍</div>
         <p>Let's get married on</p>
         <div class="date">June 20, 2030</div>
         <p style="margin-top: 40px; font-size: 28px;">I can't wait to spend forever with you! ❤️</p>
+    </div>
+
+    <div class="sorry-page" id="sorryPage">
+        <h1>😊 Oops!</h1>
+        <p>Sorry, I'm already committed to an angel! 👼</p>
+        <p style="margin-top: 30px; font-size: 24px;">My heart belongs to someone special 💝</p>
     </div>
 
     <script>
@@ -334,16 +435,55 @@
 
         // When Yes is clicked
         function sayYes() {
-            const modalOverlay = document.getElementById('modalOverlay');
-            const successPage = document.getElementById('successPage');
-
-            modalOverlay.style.animation = 'fadeIn 0.5s reverse';
-
-            setTimeout(() => {
-                modalOverlay.style.display = 'none';
-                successPage.style.display = 'block';
-            }, 500);
+            const nameInputModal = document.getElementById('nameInputModal');
+            nameInputModal.style.display = 'flex';
         }
+
+        // Check if the name is correct
+        function checkName() {
+            const nameInput = document.getElementById('nameInput').value.trim();
+            const errorMessage = document.getElementById('errorMessage');
+
+            // Valid names (case-insensitive)
+            const validNames = ['disha', 'japa', 'dhingu', 'dishu'];
+            const isValidName = validNames.some(name =>
+                nameInput.toLowerCase() === name ||
+                nameInput.toLowerCase().includes(name)
+            );
+
+            if (!nameInput) {
+                errorMessage.textContent = "Please enter your name! 🥺";
+                return;
+            }
+
+            if (isValidName) {
+                // Correct person!
+                const nameInputModal = document.getElementById('nameInputModal');
+                const modalOverlay = document.getElementById('modalOverlay');
+                const successPage = document.getElementById('successPage');
+
+                nameInputModal.style.display = 'none';
+                modalOverlay.style.animation = 'fadeIn 0.5s reverse';
+
+                setTimeout(() => {
+                    modalOverlay.style.display = 'none';
+                    successPage.style.display = 'block';
+                }, 500);
+            } else {
+                // Wrong person - show sorry message but keep input modal
+                errorMessage.textContent = "Sorry, I'm already committed to an angel! 👼💝";
+                errorMessage.style.color = "#e91e63";
+                errorMessage.style.fontSize = "18px";
+                document.getElementById('nameInput').value = '';
+            }
+        }
+
+        // Allow Enter key to submit
+        document.getElementById('nameInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                checkName();
+            }
+        });
     </script>
 </body>
 
